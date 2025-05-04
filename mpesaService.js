@@ -15,10 +15,8 @@ const mpesaConfig = {
 
 
 async function makePayment({ phoneNumber, amount, reference }) {
-    
-    console.log(mpesaConfig)
     transaction = new Mpesa(mpesaConfig)
-    
+
     const response = await transaction.c2b({
         amount: amount,
         msisdn: phoneNumber,
