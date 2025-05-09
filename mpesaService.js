@@ -10,20 +10,28 @@ const mpesaConfig = {
     origin: process.env.MPESA_API_ORIGIN,
     service_provider_code: process.env.MPESA_SERVICE_PROVIDER_CODE,
     initiator_identifier: process.env.MPESA_SERVICE_INITIATOR_IDENTIFIER,
-    security_credential: '<Security Credential>'
+    security_credential: process.env.MPESA_SECURITY_CREDENTIAL // Alterado para variável de ambiente
 }
 
-
 async function makePayment({ phoneNumber, amount, reference }) {
-    transaction = new Mpesa(mpesaConfig)
+    try {
+        const transaction = new Mpesa(mpesaConfig);
 
-    const response = await transaction.c2b({
-        amount: amount,
-        msisdn: phoneNumber,
-        reference: reference,
-        third_party_reference: Date.now().toString()
-      });
-  return response;
+        console.log('Iniciando pagamento via Mpesa:', { phoneNumber, amount, reference });
+
+        const response = await transaction.c2b({
+            amount: amount,
+            msisdn: phoneNumber,
+            reference: reference,
+            third_party_reference: Date.now().toString()
+        });
+
+        console.log('Resposta do Mpesa:', response);
+        return response;
+    } catch (error) {
+        console.error('Erro ao processar pagamento via Mpesa:', error);
+        throw new Error('Falha no processamento do pagamento. Por favor, tente novamente.');
+    }
 }
 
 module.exports = { makePayment };
